@@ -65,6 +65,8 @@ conda activate EnveomicsLab5
 conda install -c bioconda maxbin2
 ```
 
+*You've now installed MaxBin2 and IDBA-UD. Just remember you can activate and deactivate conda environments. When you first open a terminal session you will need to activate the EnveomicsLab5 environment before you can run IDBA-UD and MaxBin2*
+
 ## Step 01: Retrieve the data
 
 Navigate to the Lab5 disk, make a directory for the data, and download the data.
@@ -72,7 +74,7 @@ Navigate to the Lab5 disk, make a directory for the data, and download the data.
 ```bash
 cd /media/microbiome/Lab5
 mkdir 00_Reads_QCed
-wget 
+wget link/to/data
 ```
 
 ## Step 02: Assemble the metagenome.
@@ -82,6 +84,10 @@ The file we just downloaded contains paired Illumina sequence reads in interleav
 You can read more about genome and metagenome assembly [here](https://doi.org/10.1093/bib/bbw096) or [here](https://doi.org/10.1186/s40168-016-0154-5).
 
 You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinformatics/bts174) and [here](https://github.com/loneknightpy/idba) or by typing idba_ud at the command prompt in your terminal window with the EnveomicsLab5 conda environment activated.
+
+```bash
+idba_ud -r interleaved_illumina_reads.fasta --min_contig 1000 -o 01_IDBA_Assembly
+```
 
 Further reading:
 1. SPAdes assembler [publication](https://doi.org/10.1089/cmb.2012.0021), [website](http://cab.spbu.ru/software/spades/)
@@ -94,6 +100,10 @@ With the current state of technology it is not typically possible to reconstruct
 You can read more about metagenome binning [here](https://www.nature.com/articles/nbt.2579) or [here](https://doi.org/10.1186/gb-2009-10-8-r85).
 
 You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/btv638) or by typing run_MaxBin.pl at EnveomicsLab5 environment command prompt.
+
+```bash
+run_MaxBin.pl -contig metagenome_assembly.fasta -reads interleaved_illumina_reads.fasta -out 02_MaxBin2_MAGs
+```
 
 Further reading:
 1. MetaBat [publication](https://peerj.com/articles/7359/), [website](https://bitbucket.org/berkeleylab/metabat/src/master/)
@@ -120,5 +130,5 @@ Further reading:
 1. Which bin is the most abundant?
 2. What is the closest taxonmic affiliation of the most abundant bin?
 3. What can you infer about this population based on its recruitment plot?
-
+4. We mentioned that Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn't directly run Bowtie2. What is Bowtie2 used for? How would you install Bowtie2 if the conda recipe didn't do it for you?
 
