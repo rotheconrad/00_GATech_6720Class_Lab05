@@ -118,6 +118,8 @@ Now that we have clustered our assembled contigs in bins, we want to learn somet
 
 You can read more about MiGA and watch the video tutorials [here](http://microbial-genomes.org/). The MiGA publication is [here](https://doi.org/10.1093/nar/gky467)
 
+You can read about how to evaluate MAGs [here](https://doi.org/10.1038/nbt.3893)
+
 Further reading:
 1. CheckM [publication](http://www.genome.org/cgi/doi/10.1101/gr.186072.114), [website](https://ecogenomics.github.io/CheckM/)
 2. BUSCO [publication](https://doi.org/10.1093/bioinformatics/btv351), [website](https://busco.ezlab.org/)
@@ -127,8 +129,20 @@ Further reading:
 
 ## Questions:
 
-1. Which bin is the most abundant?
-2. What is the closest taxonmic affiliation of the most abundant bin?
-3. What can you infer about this population based on its recruitment plot?
-4. We mentioned that Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn't directly run Bowtie2. What is Bowtie2 used for? How would you install Bowtie2 if the conda recipe didn't do it for you?
+1. How many contigs did the assembly put together?
+2. How long is longest contig? What are the units of length?
+3. What is the N50 value and how is this metric defined?
+4. How many bins did MaxBin create?
+5. Which bin is the most abundant?
+6. Which bin is the longest?
+7. Which bin has the most contigs?
+8. What is the closest taxonmic affiliation of the most abundant bin?
+9. Do any of your bins have a 16S sequence?
+10. Which bin has the most contamination?
+11. Which bin has the greatest G+C content?
 
+## Challenge Questions:
+
+1. What can you infer about this population based on its recruitment plot?
+2. We mentioned that Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn't directly run Bowtie2. What is Bowtie2 used for? Can you find the Bowtie2 manual? How would you install Bowtie2 if the conda recipe didn't do it for you?
+3. What percentage of the Illumina reads map to your high-quality draft MAGs?
