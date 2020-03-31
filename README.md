@@ -49,6 +49,8 @@ bash Miniconda3-latest-Linux-x86_64.sh
 
 You can learn more about Conda environments [here](https://docs.conda.io/projects/conda/en/latest/user-guide/index.html).
 
+*Conda is currently my preferred way to install and manage software. A quick way to check if a tool is avaible through conda is to google "conda install tool name"*
+
 ### IDBA and MaxBin2
 
 Utilizing the Conda system makes installing programs and their depencies much easier. For instance, looking at the [MaxBin2 README.txt file](https://sourceforge.net/projects/maxbin2/files/) you'll notice that installation requires some prerequisites and auxiliary software packages. But, thanks to the [BioConda Project](https://bioconda.github.io/) most commonly used bioinformatics software (along with all dependencies) can be quickly installed. You'll also notice that IDBA-UD is an auxilliary package for MaxBin2. This means that with one conda install command for MaxBin2 we get IDBA-UD as well.
@@ -81,6 +83,10 @@ You can read more about genome and metagenome assembly [here](https://doi.org/10
 
 You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinformatics/bts174) and [here](https://github.com/loneknightpy/idba) or by typing idba_ud at the command prompt in your terminal window with the EnveomicsLab5 conda environment activated.
 
+Further reading:
+1. SPAdes assembler [publication](https://doi.org/10.1089/cmb.2012.0021), [website](http://cab.spbu.ru/software/spades/)
+2. MegaHit [publication](), [website]()
+
 ## Step 03: Cluster the assembly into bins (MAGs)
 
 With the current state of technology it is not typically possible to reconstruct complete genomes from the short Illumina sequenced reads. What we end up with after the assembly process are hundreds or thousands of sections of contiguous sequences (contigs).  During genome assembly, DNA is broken into contigs when the assembly algorithm is unable to determine a clear path across a segment of the genome. When this happens, the algorithm stops the current contig and starts a new one. Since metagenomes consist of many genomes, the computational challenge is now to sort out which contigs belong to which populations. We will use MaxBin2 for this task.
@@ -89,5 +95,27 @@ You can read more about metagenome binning [here](https://www.nature.com/article
 
 You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/btv638) or by typing run_MaxBin.pl at EnveomicsLab5 environment command prompt.
 
+Further reading:
+1. MetaBat [publication](https://peerj.com/articles/7359/), [website](https://bitbucket.org/berkeleylab/metabat/src/master/)
+2. Concoct [publication](https://doi.org/10.1038/nmeth.3103), [website](https://github.com/BinPro/CONCOCT)
+3. BinSanity [publication](https://peerj.com/articles/3035/), [website](https://github.com/edgraham/BinSanity)
+4. DasTool [publication](https://doi.org/10.1038/s41564-018-0171-1), [website](https://github.com/cmks/DAS_Tool)
+4. CAMI challenge [publication](https://doi.org/10.1038/nmeth.4458), [website](https://data.cami-challenge.org/)
 
+## Step 04: Evaluate the recovered MAGs
 
+Now that we have clustered our assembled contigs in bins, we want to learn something about the bins we've recovered. In theory, each bin should represent a single sequence-discrete population living in the environment where we collected the metagenomic sample. In practice, the automated (or even manual) clustering process is filled with noise and uncertainty. Furthermore, we would like to know something about the taxonomic assignments for the bins we've recovered. We will use MiGA to evaluate some common genomic metrics and to identify the closest taxonomic assignments of our MAGs.
+
+You can read more about MiGA and watch the video tutorials [here](http://microbial-genomes.org/). The MiGA publication is [here](https://doi.org/10.1093/nar/gky467)
+
+Further reading:
+1. CheckM [publication](http://www.genome.org/cgi/doi/10.1101/gr.186072.114), [website](https://ecogenomics.github.io/CheckM/)
+2. BUSCO [publication](https://doi.org/10.1093/bioinformatics/btv351), [website](https://busco.ezlab.org/)
+3. QUAST [publication](https://doi.org/10.1093/bioinformatics/btt086), [website](http://cab.spbu.ru/software/quast/)
+4. MetaQUAST [publication](https://doi.org/10.1093/bioinformatics/btv697), [website](http://cab.spbu.ru/software/metaquast/)
+5. Anvi'o [publication](https://peerj.com/articles/1319/), [website](http://merenlab.org/software/anvio/)
+
+## Questions:
+
+1. Which bin is the most abundant?
+2. What is the closest taxonmic affiliation of the most abundant bin?
