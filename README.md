@@ -1,12 +1,14 @@
-# 00_GATech_6720Class_Lab05
+# GATech Class 6720 Lab05
 
 This is an assignment developed as Bioinformatics Lab 05 for Class 6720 - Environemntal Microbial Genomics at GA Tech.
 
 The objective of this lab is to identify the most abundant population for which a metagenome assembled genome (MAG) can be recovered. To do this, we will assembled an Illumina sequenced metagenomic sample from Pensacola beach sands collected during the Macodomonis oil spill. We will start with our metagenome in interleaved fasta format. The paired reads in this file have already been quality controlled for us. Our task will be to assembled the reads into contigs using the IDBA-UD assembler, cluster the contigs into bins (MAGs) using MaxBin2 and find the most abundant MAG, and then identify the nearest taxonomic assignment as well as the completeness, contamination, and quality scores for each MAG using the Microbial Genomes Atlas (MiGA). This lab has instructions optimized for the MicrobiomeOS virtual machine (VM) running Ubuntu. The virtual machine can be downloaded [here](http://enve-omics.ce.gatech.edu/microbiomeos/).
 
+A good overview of metagenomic sampling and analysis can be found [here](https://www.nature.com/articles/nbt.3935).
+
 This lab will require XXgb of disk space. I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
 
-Add a second hard disk to your VM to increase disk space
+#### Add a second hard disk to your VM to increase disk space
 Takes 5 min or less.
 
 0. Make sure your VM is powered off.
@@ -26,19 +28,24 @@ Takes 5 min or less.
 14. Underneath Volumes select the gears icon and click format partition. Choose a name for the new disk such as Lab5, for Type select the Ext4 file system, and click format
 15. If it asks you if you are sure, click format again. If it asks for a password, the password for the microbiomeOS is microbiome.
 15. You should now see the play symbol next to the gear icon. You must now click the play play button. This will mount the partition.
-16. Below the play button you will see a Contents label showing the path where your new disk is Mounted at. It should be something like /midea/microbiome/Lab5. This is the new folder to install and store files for Lab5.
+16. Below the play button you will see a Contents label showing the path where your new disk is Mounted at. It should be something like /media/microbiome/Lab5. This is the new folder to install and store files for Lab5.
 
 ## Step 00: Required tools :: Conda with Python 3.6+, IDBA-UD, and MaxBin2.
 
 ### Conda with Python 3.6+
 
-From the [mini conda website](https://docs.conda.io/en/latest/miniconda.html), select the appropriate installer and download it. For the VM choose Linux installers Python 3.7 (most modern computers are 64-bit) and save the file. Open a terminal window and navigate to the Miniconda installer (try the Downloads folder). Once you locate the file, you can run it like so (change the file name if yours is different):
+From the [mini conda installation page](https://docs.conda.io/en/latest/miniconda.html), select the appropriate installer and download it. For the VM choose Linux installers Python 3.7 (most modern computers are 64-bit) and save the file. Open a terminal window and navigate to the Miniconda installer (try the Downloads folder). Once you locate the file, you can run it like so (change the file name if yours is different):
 
 ```bash
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-Follow the instructions and do a default installation. Answer yes where appropriate.
+1. Press enter and then use the spacebar to scroll through the terms.
+2. Enter yes to accept the terms.
+3. We want to install miniconda3 to our Lab5 disk. Input /media/microbiome/Lab5/miniconda3 and type enter.
+4. We want the installer to initialize Miniconda3 by running conda init. type yes.
+5. For changes to take effect we need to close the terminal session and open a new one.
+6. When youreopen the terminal you will (base) next to the microbiome command prompt. This lets us know which conda environment we are currently in.
 
 You can learn more about Conda environments [here](https://docs.conda.io/projects/conda/en/latest/user-guide/index.html).
 
@@ -48,9 +55,39 @@ Utilizing the Conda system makes installing programs and their depencies much ea
 
 ```bash
 # Create a conda environment for lab 5
+# The default location should be /media/microbiome/Lab5/miniconda3/envs/EnveomicsLab5
 conda create -n EnveomicsLab5
 # Activate the lab 5 environment
 conda activate EnveomicsLab5
-# install MaxBin2
+# install MaxBin2 with all dependies - appreciate while conda does all the work for you.
 conda install -c bioconda maxbin2
 ```
+
+## Step 01: Retrieve the data
+
+Navigate to the Lab5 disk, make a directory for the data, and download the data.
+
+```bash
+cd /media/microbiome/Lab5
+mkdir 00_Reads_QCed
+wget 
+```
+
+## Step 02: Assemble the metagenome.
+
+The file we just downloaded contains paired Illumina sequence reads in interleaved format. Interleaved simply means that the first read pair is always immediatly followed by the second read pair on the next line. The DNA that was sequenced was obtained by extracting DNA from all the cells in the sample yielding millions of pieces of DNA from potentially hundreds or thousands of distinct populations. The computational challenge here is to put all the pieces back together. We will use the IDBA-UD assembler for this task.
+
+You can read more about genome and metagenome assembly [here](https://doi.org/10.1093/bib/bbw096) or [here](https://doi.org/10.1186/s40168-016-0154-5).
+
+You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinformatics/bts174) and [here](https://github.com/loneknightpy/idba) or by typing idba_ud at the command prompt in your terminal window with the EnveomicsLab5 conda environment activated.
+
+## Step 03: Cluster the assembly into bins (MAGs)
+
+With the current state of technology it is not typically possible to reconstruct complete genomes from the short Illumina sequenced reads. What we end up with after the assembly process are hundreds or thousands of sections of contiguous sequences (contigs).  During genome assembly, DNA is broken into contigs when the assembly algorithm is unable to determine a clear path across a segment of the genome. When this happens, the algorithm stops the current contig and starts a new one. Since metagenomes consist of many genomes, the computational challenge is now to sort out which contigs belong to which populations. We will use MaxBin2 for this task.
+
+You can read more about metagenome binning [here](https://www.nature.com/articles/nbt.2579) or [here](https://doi.org/10.1186/gb-2009-10-8-r85).
+
+You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/btv638) or by typing run_MaxBin.pl at EnveomicsLab5 environment command prompt.
+
+
+
