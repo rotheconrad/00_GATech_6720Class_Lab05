@@ -89,6 +89,8 @@ You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinf
 idba_ud -r interleaved_illumina_reads.fasta --min_contig 1000 -o 01_IDBA_Assembly
 ```
 
+*If your computer has multiple threads and you've configured your VM to use more than 1 look at the --num_threads flag to reduce computation time.*
+
 Further reading:
 1. SPAdes assembler [publication](https://doi.org/10.1089/cmb.2012.0021), [website](http://cab.spbu.ru/software/spades/)
 2. MegaHit [publication](), [website]()
@@ -104,6 +106,8 @@ You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/bt
 ```bash
 run_MaxBin.pl -contig metagenome_assembly.fasta -reads interleaved_illumina_reads.fasta -out 02_MaxBin2_MAGs
 ```
+
+*If your computer has multiple threads and you've configured your VM to use more than 1 look at the --thread flag to reduce computation time.*
 
 Further reading:
 1. MetaBat [publication](https://peerj.com/articles/7359/), [website](https://bitbucket.org/berkeleylab/metabat/src/master/)
