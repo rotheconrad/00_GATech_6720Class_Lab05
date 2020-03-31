@@ -119,3 +119,6 @@ Further reading:
 
 1. Which bin is the most abundant?
 2. What is the closest taxonmic affiliation of the most abundant bin?
+3. What can you infer about this population based on its recruitment plot?
+
+
