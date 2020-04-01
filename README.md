@@ -112,6 +112,8 @@ mkdir 02_MaxBin_MAGs
 run_MaxBin.pl -contig 01_IDBA_Assembly/scaffold.fa -reads 00_Reads_QCed/Lab5_InterleavedPairedReads.fa -out 02_MaxBin_MAGs/Lab5_MAG
 ```
 
+With 1 core this step only takes about 5 minutes.
+
 *If your computer has multiple threads and you've configured your VM to use more than 1 look at the --thread flag to reduce computation time.*
 
 Further reading:
