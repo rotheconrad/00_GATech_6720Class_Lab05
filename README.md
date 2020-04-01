@@ -88,6 +88,9 @@ You can read more about genome and metagenome assembly [here](https://doi.org/10
 You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinformatics/bts174) and [here](https://github.com/loneknightpy/idba) or by typing idba_ud at the command prompt in your terminal window with the EnveomicsLab5 conda environment activated.
 
 ```bash
+# First type idba_ud on its own to see all the options
+idba_ud
+# Here is an example of one simple way to run it
 idba_ud -r 00_Reads_QCed/Lab5_InterleavedPairedReads.fa --min_contig 1000 -o 01_IDBA_Assembly
 ```
 
@@ -108,7 +111,11 @@ You can read more about metagenome binning [here](https://www.nature.com/article
 You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/btv638) or by typing run_MaxBin.pl at EnveomicsLab5 environment command prompt.
 
 ```bash
+# Make a directory for the output files
 mkdir 02_MaxBin_MAGs
+# First run run_MaxBin.pl on its own to see all the options
+run_MaxBin.pl
+# Here is an example of one simple way to run it
 run_MaxBin.pl -contig 01_IDBA_Assembly/scaffold.fa -reads 00_Reads_QCed/Lab5_InterleavedPairedReads.fa -out 02_MaxBin_MAGs/Lab5_MAG
 ```
 
