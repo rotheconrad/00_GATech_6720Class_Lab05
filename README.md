@@ -6,7 +6,7 @@ The objective of this lab is to identify the most abundant population for which 
 
 A good overview of metagenomic sampling and analysis can be found [here](https://www.nature.com/articles/nbt.3935).
 
-This lab will require XXgb of disk space. I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
+This lab will require 5gb of disk space. I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
 
 #### Add a second hard disk to your VM to increase disk space
 Takes 5 min or less.
@@ -19,7 +19,7 @@ Takes 5 min or less.
 5. Click Create
 6. Select VHD (Virtual Hard Disk) and click continue
 7. Select Fixed size and click continue
-8. Select desired size (Need at least XXgb for lab 5) and click Create
+8. Select desired size (Need at least 5gb for lab 5) and click Create
 9. Select the new drive we just created from beneath the Not Attached arrow and click Choose (It should be something like MicrobiomeOS_1.vhd)
 10. We have now created and added a second virtual harddrive to our machine. Click Ok.
 11. Start the MicrobeOS virtual machine and let it load.
