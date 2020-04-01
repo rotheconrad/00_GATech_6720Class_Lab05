@@ -145,6 +145,10 @@ Further reading:
 4. MetaQUAST [publication](https://doi.org/10.1093/bioinformatics/btv697), [website](http://cab.spbu.ru/software/metaquast/)
 5. Anvi'o [publication](https://peerj.com/articles/1319/), [website](http://merenlab.org/software/anvio/)
 
+## Step 05: Build recruitment plots with Enveomics RecPlot2
+
+Recruitment plots are used to visualize the distribution of metagenomic reads to a reference genome such as a MAG. Based on this distribution it is possible to infer if a population is heterogeneous or clonal, if there is another closely related population in the metagenome, where the sequence-discrete threshold is, and if any genes or genomic regions from the reference appear to be missing in the metagenome population. We will use the [BlastTab.recplot2.R](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.recplot2.R) script from the [Enveomics collection](http://enve-omics.ce.gatech.edu/enveomics/docs) for this task.
+
 ## Questions:
 
 1. How many contigs did the assembly put together?
@@ -165,3 +169,7 @@ Further reading:
 
 1. We mentioned that Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn't directly run Bowtie2. What is Bowtie2 used for? Can you find the Bowtie2 manual? How would you install Bowtie2 if the conda recipe didn't do it for you?
 2. What percentage of the Illumina reads map to your high-quality draft MAGs?
+
+#### Convert MarkDown to docx for word using pandoc
+conda install pandoc
+pandoc -o 6720_Lab05.docx -f markdown -t docx README.md
