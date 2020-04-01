@@ -74,7 +74,9 @@ Navigate to the Lab5 disk, make a directory for the data, and download the data.
 ```bash
 cd /media/microbiome/Lab5
 mkdir 00_Reads_QCed
-wget link/to/data
+wget http://rothlab.com/Data/Lab5_InterleavedPairedReads.fa.gz
+gunzip Lab5_InterleavedPairedReads.fa.gz
+mv Lab5_InterleavedPairedReads.fa 00_Reads_QCed
 ```
 
 ## Step 02: Assemble the metagenome.
@@ -86,10 +88,12 @@ You can read more about genome and metagenome assembly [here](https://doi.org/10
 You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinformatics/bts174) and [here](https://github.com/loneknightpy/idba) or by typing idba_ud at the command prompt in your terminal window with the EnveomicsLab5 conda environment activated.
 
 ```bash
-idba_ud -r interleaved_illumina_reads.fasta --min_contig 1000 -o 01_IDBA_Assembly
+idba_ud -r 00_Reads_QCed/Lab5_InterleavedPairedReads.fa --min_contig 1000 -o 01_IDBA_Assembly
 ```
 
-*If your computer has multiple threads and you've configured your VM to use more than 1 look at the --num_threads flag to reduce computation time.*
+With 1 core and 8Gb of ram allocated to my VM assembly took 90 minutes.
+
+*If your computer has multiple threads and you've configured your VM to use more than 1 look at the --num_threads flag to reduce computation time. To increase the cores available to your VM, first power off your VM, then click settings from the Virtual Box Manager, Select the System tab, then the Processor tab, choose up to half your available CPUs then click ok and then turn your VM back on. You now have this number of threads available.*
 
 Further reading:
 1. SPAdes assembler [publication](https://doi.org/10.1089/cmb.2012.0021), [website](http://cab.spbu.ru/software/spades/)
@@ -104,7 +108,8 @@ You can read more about metagenome binning [here](https://www.nature.com/article
 You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/btv638) or by typing run_MaxBin.pl at EnveomicsLab5 environment command prompt.
 
 ```bash
-run_MaxBin.pl -contig metagenome_assembly.fasta -reads interleaved_illumina_reads.fasta -out 02_MaxBin2_MAGs
+mkdir 02_MaxBin_MAGs
+run_MaxBin.pl -contig 01_IDBA_Assembly/scaffold.fa -reads 00_Reads_QCed/Lab5_InterleavedPairedReads.fa -out 02_MaxBin_MAGs/Lab5_MAG
 ```
 
 *If your computer has multiple threads and you've configured your VM to use more than 1 look at the --thread flag to reduce computation time.*
@@ -143,10 +148,11 @@ Further reading:
 8. What is the closest taxonmic affiliation of the most abundant bin?
 9. Do any of your bins have a 16S sequence?
 10. Which bin has the most contamination?
-11. Which bin has the greatest G+C content?
+11. What are the completeness and contamination estimates based upon and how reliable they are? (Tip, you may want to read the “Learn more” boxes of MiGA)
+12. Which bin has the greatest G+C content?
+13. Build recruitment plots for each of your MAGs. What can you infer about this population based on its recruitment plot?
 
 ## Challenge Questions:
 
-1. What can you infer about this population based on its recruitment plot?
-2. We mentioned that Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn't directly run Bowtie2. What is Bowtie2 used for? Can you find the Bowtie2 manual? How would you install Bowtie2 if the conda recipe didn't do it for you?
-3. What percentage of the Illumina reads map to your high-quality draft MAGs?
+1. We mentioned that Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn't directly run Bowtie2. What is Bowtie2 used for? Can you find the Bowtie2 manual? How would you install Bowtie2 if the conda recipe didn't do it for you?
+2. What percentage of the Illumina reads map to your high-quality draft MAGs?
