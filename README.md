@@ -2,11 +2,13 @@
 
 This is an assignment developed as Bioinformatics Lab 05 for Class 6720 - Environemntal Microbial Genomics at GA Tech.
 
-The objective of this lab is to taxonomically identify the most abundant population a target metagenome based its metagenome-assembled genome (MAG) and check the quality of the recovered MAG. To do this, we will assemble an Illumina sequenced metagenomic sample from Pensacola beach sands collected during the Deep-Horizon (aka BP) oil spill. We will start with our metagenome in interleaved fasta format. The paired reads in this file have already been quality checked and trimmed. Our task will be to assemble the reads into contigs using the IDBA-UD assembler, cluster the contigs into MAGs using MaxBin2, find the most abundant MAG from the MaxBin2 output files, and then identify the nearest (named) taxonomic relative as well as the level of completeness, contamination, and quality for each MAG using the Microbial Genomes Atlas (MiGA). The instructions for this lab were written for the MicrobiomeOS virtual machine (VM) running Ubuntu which can be downloaded [here](http://enve-omics.ce.gatech.edu/microbiomeos/), but, apart from adding the second hard disk, the instructions should work for any linux environment with a terminal.
+The objective of this lab is to taxonomically identify the most abundant population in a target metagenome based on its metagenome-assembled genome (MAG) and check the quality of the recovered MAG. To do this, we will assemble an Illumina sequenced metagenomic sample from Pensacola beach sands collected during the Deep-Horizon (aka BP) oil spill. We will start with our metagenome in interleaved fasta format. The paired reads in this file have already been quality checked and trimmed. Our task will be to assemble the reads into contigs using the IDBA-UD assembler, cluster the contigs into MAGs using MaxBin2, find the most abundant MAG, and identify the nearest (named) taxonomic relative as well as the level of completeness, contamination, and quality for each MAG using the Microbial Genomes Atlas (MiGA).
+
+The instructions for this lab were written for the MicrobiomeOS virtual machine (VM) running Ubuntu which can be downloaded [here](http://enve-omics.ce.gatech.edu/microbiomeos/), but, apart from adding the second hard disk, the instructions should work for any linux environment with a terminal.
 
 A good overview of metagenomic sampling and analysis can be found [here](https://www.nature.com/articles/nbt.3935).
 
-This lab will require 5GB of disk space. I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
+This lab will require \~5GB of disk space. I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
 
 #### Add a second hard disk to your VM to increase disk space
 Takes 5 min or less.
@@ -15,7 +17,7 @@ Takes 5 min or less.
 1. Open the Oracle VM VirtualBox Manager
 2. Select the MicrobiomeOS and click Settings
 3. Navigate to the Storage tab
-4. Select Controller: SATA inside the Storage Devices box on the left and click the diskdrive icon with the green "+" (Not the CD icon)
+4. Select Controller: SATA inside the Storage Devices box on the left and click the disk drive icon with the green "+" (Not the CD icon)
 5. Click Create
 6. Select VHD (Virtual Hard Disk) and click continue
 7. Select Fixed size and click continue
@@ -53,7 +55,7 @@ You can learn more about Conda environments [here](https://docs.conda.io/project
 
 ### IDBA and MaxBin2
 
-Utilizing the Conda system makes installing programs and their depencies much easier. For instance, looking at the [MaxBin2 README.txt file](https://sourceforge.net/projects/maxbin2/files/) you'll notice that installation requires some prerequisites and auxiliary software packages. But, thanks to the [BioConda Project](https://bioconda.github.io/) most commonly used bioinformatics software (along with all dependencies) can be quickly installed. You'll also notice that IDBA-UD is an auxilliary package for MaxBin2. This means that with one conda install command for MaxBin2 we get IDBA-UD as well.
+Utilizing the Conda system makes installing programs and their dependencies much easier. For instance, looking at the [MaxBin2 README.txt file](https://sourceforge.net/projects/maxbin2/files/) you'll notice that installation requires some prerequisites and auxiliary software packages. But, thanks to the [BioConda Project](https://bioconda.github.io/) most commonly used bioinformatics software (along with all dependencies) can be quickly installed. You'll also notice that IDBA-UD is an auxilliary package for MaxBin2. This means that with one conda install command for MaxBin2 we get IDBA-UD as well.
 
 ```bash
 # Create a conda environment for lab 5
@@ -74,27 +76,28 @@ Navigate to the Lab5 disk, make a directory for the data, and download the data.
 ```bash
 cd /media/microbiome/Lab5
 mkdir 00_Reads_QCed
-wget http://rothlab.com/Data/Lab5_InterleavedPairedReads.fa.gz
-gunzip Lab5_InterleavedPairedReads.fa.gz
-mv Lab5_InterleavedPairedReads.fa 00_Reads_QCed
+wget http://rothlab.com/Data/T4AerOil_sbsmpl5.fa.gz
+gunzip T4AerOil_sbsmpl5.fa.gz
+mv T4AerOil_sbsmpl5.fa 00_Reads_QCed
 ```
 
 ## Step 02: Assemble the metagenome.
 
-The file we just downloaded contains paired Illumina sequence reads in interleaved format. Interleaved simply means that the first read pair is always immediatly followed by the second read pair on the next line. The next computational challenge here is to assemble reads together that represent the same species (metagenome assembly). We will use the IDBA-UD assembler for this task.
+The file we just downloaded contains paired Illumina sequence reads in interleaved format. Interleaved simply means that the first read pair is always immediately followed by the second read pair on the next line. The next computational challenge here is to assemble reads together that represent the same species (metagenome assembly). We will use the IDBA-UD assembler for this task.
 
 You can read more about genome and metagenome assembly [here](https://doi.org/10.1093/bib/bbw096) or [here](https://doi.org/10.1186/s40168-016-0154-5).
 
 You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinformatics/bts174) and [here](https://github.com/loneknightpy/idba) or by typing idba_ud at the command prompt in your terminal window with the EnveomicsLab5 conda environment activated.
 
+*With 1 core and 8GB of RAM allocated to the VM, assembly took 48 minutes. You need at least 8GB of ram allocated to your VM to assemble this metagenome. If you do not have enough RAM, you can skip this step and follow directions in Step 03 to download the files you need. You can change the amount of RAM your VM has access to under the "System" tab in the virtual box manager settings.*
+
 ```bash
 # First type idba_ud on its own to see all the options
 idba_ud
-# Here is an example of one simple way to run it
-idba_ud -r 00_Reads_QCed/Lab5_InterleavedPairedReads.fa --min_contig 1000 -o 01_IDBA_Assembly
+# Here is an example of one simple way to run it.
+# Change the input filenames to your file
+idba_ud -r interleaved_metagenome.fasta --min_contig 1000 -o 01_IDBA_Assembly
 ```
-
-With 1 core and 8GB of ram allocated to the VM assembly took 90 minutes.
 
 *If your computer has multiple threads and you've configured your VM to use more than 1, look at the --num_threads flag to reduce computation time. To increase the cores available to your VM, first power off your VM, then click settings from the Virtual Box Manager, select the System tab, then the Processor tab, choose up to half of your available CPUs then click ok and then turn your VM back on. You now have this number of threads available.*
 
@@ -110,16 +113,26 @@ You can read more about metagenome binning [here](https://www.nature.com/article
 
 You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/btv638) or by typing run_MaxBin.pl at EnveomicsLab5 environment command prompt.
 
+*If you didn't have enough RAM to assemble the metagenome, follow the instructions below to download the assembly.*
+
+```bash
+# Download the file
+wget wget http://rothlab.com/Data/01_IDBA_Assembly.tar.gz
+# uncompress the file
+tar -xzvf 01_IDBA_Assembly.tar.gz
+```
+
+Once you have the assembly, follow the directions below to bin your contigs. This step only takes about 2 minutes with a single core and doesn't use much RAM.
+
 ```bash
 # Make a directory for the output files
 mkdir 02_MaxBin_MAGs
 # First run run_MaxBin.pl on its own to see all the options
 run_MaxBin.pl
 # Here is an example of one simple way to run it
-run_MaxBin.pl -contig 01_IDBA_Assembly/scaffold.fa -reads 00_Reads_QCed/Lab5_InterleavedPairedReads.fa -out 02_MaxBin_MAGs/Lab5_MAG
+# Change the input filenames to your file
+run_MaxBin.pl -contig metagenome_assembly.fasta -reads interleaved_metagenome.fasta -out 02_MaxBin_MAGs/Lab5_MAG
 ```
-
-With 1 core this step only takes about 5 minutes.
 
 *If your computer has multiple threads and you've configured your VM to use more than 1 look at the --thread flag to reduce computation time.*
 
@@ -138,6 +151,15 @@ You can read more about MiGA and watch the video tutorials [here](http://microbi
 
 You can read about how to evaluate MAGs [here](https://doi.org/10.1038/nbt.3893)
 
+*If you had issues binning your contigs with MaxBin2, you can download the bins you need to complete this assignment with the instructions below.*
+
+```bash
+# Download the file
+wget http://rothlab.com/Data/02_MaxBin_MAGs.tar.gz
+# uncompress the file
+tar -xzvf 02_MaxBin_MAGs.tar.gz
+```
+
 Further reading (alternative genome assessment):
 1. CheckM [publication](http://www.genome.org/cgi/doi/10.1101/gr.186072.114), [website](https://ecogenomics.github.io/CheckM/)
 2. BUSCO [publication](https://doi.org/10.1093/bioinformatics/btv351), [website](https://busco.ezlab.org/)
@@ -149,20 +171,44 @@ Further reading (alternative genome assessment):
 
 Recruitment plots are used to visualize the distribution of metagenomic reads to a reference genome such as a MAG. Based on this distribution it is possible to infer if a population is heterogeneous or clonal, if there is another closely related population in the metagenome, where the sequence-discrete threshold is, and if any genes or genomic regions from the reference appear to be missing in the metagenome population. We will use the [BlastTab.recplot2.R](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.recplot2.R) script from the [Enveomics collection](http://enve-omics.ce.gatech.edu/enveomics/docs) for this task.
 
+*With 1 core, the blastn step takes about 10 minutes for each MAG, and the BlastTab.recplot2.R step takes about an hour.*
+
+
 ```bash
-# first make a blast database with the MAG fasta file
-makeblastdb -type nucl -in MAGname.fasta
+# We're going to use some custom scripts for this section.
+# Download the scripts
+wget http://rothlab.com/Data/00_Scripts.tar.gz
+# uncompress the file
+tar -xzvf 00_Scripts.tar.gz
+# next we need to make a blast databases (repeat for each MAG fasta file)
+makeblastdb -dbtype nucl -in MAGname.fasta
+# Make new output directory
+mkdir 03_RecPlot
 # map metagenomic reads to the MAG and get the output in tabular blast format
-blastn -db MAGname.fasta -query metagenomicReads.fasta -out blastoutput_filename.blast -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen'
+# (repeat for each MAG fasta file)
+blastn -db MAGname.fasta -query interleaved_metagenome.fasta -out 03_RecPlot/blastoutput_filename.blast -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen'
 # filter the blast output for best hits
-script to filter the blast output?
+# remember the discussion and doing this manually for Lab 1 and Lab4?
+# let's use a script this time
+python 00_Scripts/BlastTab_filter.py -h
+# run the script with default settings
+# (repeat for each MAG tabular blast file)
+python 00_Scripts/BlastTab_filter.py -i blastoutput_filename.blast
+# We are finished with the conda environment. Deactivate to access the native R copy on the VM
+conda deactivate
 # prepare blast output for recplot2 script
-BlastTab.catsbj.pl metagenomicReads.fasta blastoutput_filename.blast
-# install enveomics.R in your R environment
-wget https://cran.r-project.org/src/contrib/Archive/enveomics.R/enveomics.R_1.5.0.tar.gz R
-CMD INSTALL ./enveomics.R_1.5.0.tar.gz
+# (repeat for each MAG filtered tabular blast file)
+BlastTab.catsbj.pl MAGname.fasta filtered_blastoutput_filename.blst
+# need to update the enveomics.R package in your R environment for RecPlot2 script.
+wget https://cran.r-project.org/src/contrib/Archive/enveomics.R/enveomics.R_1.5.0.tar.gz 
+R CMD INSTALL ./enveomics.R_1.5.0.tar.gz
 # run the recplot2 script
-BlastTab.recplot2.R --prefix blastoutput_filename recplotOutput.Rdata recplotOutput.pdf
+# (repeat for each MAG filtered tabular blast file)
+BlastTab.recplot2.R --prefix filtered_blastoutput_filename recplotOutput.Rdata recplotOutput.pdf
+# You can explore the recruitment plot by viewing the PDF file.
+# with a little bit of R code we can extract some statistics from the Rdata file.
+# (repeat for each MAG Rdata file)
+rscript 00_Scripts/Recplot2_Summary_Stats.R recplotOutput.Rdata
 ```
 
 ## Questions:
@@ -174,8 +220,8 @@ BlastTab.recplot2.R --prefix blastoutput_filename recplotOutput.Rdata recplotOut
 5. Which bin is the most abundant?
 6. Which bin is the longest?
 7. Which bin has the most contigs?
-8. What is the closest taxonmic affiliation of the most abundant bin?
-9. Do any of your bins have a 16S sequence?
+8. What is the closest taxonmic affiliation of **the most abundant** MAG?
+9. Do any of your MAGs contain a 16S rRNA gene sequence?
 10. Which bin has the most contamination?
 11. What are the completeness and contamination estimates based upon and how reliable they are? (Tip, you may want to read the “Learn more” boxes of MiGA)
 12. Which bin has the greatest G+C% content?
