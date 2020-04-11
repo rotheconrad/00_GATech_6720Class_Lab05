@@ -2,13 +2,13 @@
 
 This is an assignment developed as Bioinformatics Lab 05 for Class 6720 - Environemntal Microbial Genomics at GA Tech.
 
-The objective of this lab is to taxonomically identify the most abundant population in a target metagenome based on its metagenome-assembled genome (MAG) and check the quality of the recovered MAG. To do this, we will assemble an Illumina sequenced metagenomic sample from Pensacola beach sands collected during the Deep-Horizon (aka BP) oil spill. We will start with our metagenome in interleaved fasta format. The paired reads in this file have already been quality checked and trimmed. Our task will be to assemble the reads into contigs using the IDBA-UD assembler, cluster the contigs into MAGs using MaxBin2, find the most abundant MAG, and identify the nearest (named) taxonomic relative as well as the level of completeness, contamination, and quality for each MAG using the Microbial Genomes Atlas (MiGA).
+The objective of this lab is to recover one or more metagenome-assembled genomes (MAGs) from a metagenomic sample, to evaluate the quality and taxonomic affiliation of the recovered MAG(s), and to calculate the relative abundance and coverage of the MAG(s) in the sample. To do this, we will assemble an Illumina sequenced metagenomic sample from Pensacola beach sands collected during the Deep-Horizon (aka BP) oil spill. We will start with our metagenome in interleaved fasta format. The paired reads in this file have already been quality checked and trimmed. Our task will be to assemble the reads into contigs using the IDBA-UD assembler, cluster the contigs into MAGs using MaxBin2, find the most abundant MAG, and identify the nearest (named) taxonomic relative as well as the level of completeness, contamination, and quality for each MAG using the Microbial Genomes Atlas (MiGA). We will also build recruitment plots to visually assess the read recruitment to the MAG(s). 
 
 The instructions for this lab were written for the MicrobiomeOS virtual machine (VM) running Ubuntu which can be downloaded [here](http://enve-omics.ce.gatech.edu/microbiomeos/), but, apart from adding the second hard disk, the instructions should work for any linux environment with a terminal.
 
 A good overview of metagenomic sampling and analysis can be found [here](https://www.nature.com/articles/nbt.3935).
 
-This lab will require and at least 8466MB of base memory and around 10GB of disk space. You can change the base memory from the settings menu in the virtual box manager from the “System” tab while the VM is powered off. To ensure you have enough disk space, I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
+This lab will require and at least 8466MB of base memory and around 10GB of disk space. You can change the base memory from the settings menu in the virtual box manager from the “System” tab while the VM is powered off. To ensure you have enough disk space, I recommend to create and mount a virtual hard disk drive to the VM following these instructions:
 
 #### Add a second hard disk to your VM to increase disk space
 Takes 5 min or less.
@@ -60,14 +60,14 @@ Utilizing the Conda system makes installing programs and their dependencies much
 ```bash
 # Create a conda environment for lab 5
 # The default location should be /media/microbiome/Lab5/miniconda3/envs/EnveomicsLab5
-conda create -n EnveomicsLab5
+# At the same time that we create the environment, we will install maxbin2 with all dependencies, and we will also install some R-packages that we will need to build the recruitments plots. 
+# Appreciate how easy conda has made this while you watch it install everything for you. 
+conda create -n EnveomicsLab5 –c conda-forge -c bioconda maxbin2 r-optparse  r-fitdistrplus r-sn r-investr
 # Activate the lab 5 environment
 conda activate EnveomicsLab5
-# install MaxBin2 with all dependies - appreciate while conda does all the work for you.
-conda install -c bioconda maxbin2
 ```
 
-*You've now installed MaxBin2 and IDBA-UD. Just remember you can activate and deactivate conda environments. When you first open a terminal session you will need to activate the EnveomicsLab5 environment before you can run IDBA-UD and MaxBin2*
+*In one fell swoop we’ve installed MaxBin2 and IDBA-UD along with some additional decencies for the Enveomics recruitment plot tool. Just remember you can activate and deactivate conda environments. When you first open a terminal session you will need to activate the EnveomicsLab5 environment before you can use these tools.*
 
 ## Step 01: Retrieve the data
 
@@ -89,13 +89,13 @@ You can read more about genome and metagenome assembly [here](https://doi.org/10
 
 You can read more about the IDBA assembler [here](https://doi.org/10.1093/bioinformatics/bts174) and [here](https://github.com/loneknightpy/idba) or by typing idba_ud at the command prompt in your terminal window with the EnveomicsLab5 conda environment activated.
 
-*With 1 core and 8GB of RAM allocated to the VM, assembly took 48 minutes. You need at least 8GB of ram allocated to your VM to assemble this metagenome. If you do not have enough RAM, you can skip this step and follow directions in Step 03 to download the files you need. You can change the amount of RAM your VM has access to under the "System" tab in the virtual box manager settings.*
+*With 1 core and 4GB of RAM allocated to the VM on a 2014 MacBook Pro with a 2.6 GHz Intel Core i5 processor, assembly took 48 minutes. Run times will vary depending on your processor(s). You need at least 4GB of ram allocated to your VM to assemble this metagenome. If you do not have enough RAM, you can skip this step and follow directions in Step 03 to download the files you need. You can change the amount of RAM your VM has access to under the “System” tab in the virtual box manager settings.*
 
 ```bash
 # First type idba_ud on its own to see all the options
 idba_ud
 # Here is an example of one simple way to run it.
-# Change the input filenames to your file
+# Change the input filename to the correct file.
 idba_ud -r interleaved_metagenome.fasta --min_contig 1000 -o 01_IDBA_Assembly
 ```
 
@@ -107,7 +107,7 @@ Further reading (alternative, robust assemblers):
 
 ## Step 03: Cluster the assembly into bins (MAGs)
 
-With the current state of technology, it is not typically possible to reconstruct complete genomes from the short Illumina sequenced reads based on assembly alone. What we end up with after the assembly process are hundreds or thousands of sections of contiguous sequences (contigs) representing the different species in the sample.  The next computational challenge is to sort out which contigs belong to which genomes(species) and group them into population genome bins to obtain MAGs. We will use MaxBin2 for this task.
+With the current state of DNA sequencing technology, it is not typically possible to reconstruct complete genomes from the short Illumina sequenced reads based on assembly alone. What we end up with after the assembly process are hundreds or thousands of sections of contiguous sequences (contigs) representing the different species in the sample. The next computational challenge is to sort out which contigs belong to which genomes (species) and group them into population genome bins to obtain MAGs. We will use MaxBin2 for this task.
 
 You can read more about metagenome binning [here](https://www.nature.com/articles/nbt.2579) or [here](https://doi.org/10.1186/gb-2009-10-8-r85).
 
@@ -117,7 +117,7 @@ You can read more about MaxBin2 [here](https://doi.org/10.1093/bioinformatics/bt
 
 ```bash
 # Download the file
-wget wget http://rothlab.com/Data/01_IDBA_Assembly.tar.gz
+wget http://rothlab.com/Data/01_IDBA_Assembly.tar.gz
 # uncompress the file
 tar -xzvf 01_IDBA_Assembly.tar.gz
 ```
@@ -130,7 +130,7 @@ mkdir 02_MaxBin_MAGs
 # First run run_MaxBin.pl on its own to see all the options
 run_MaxBin.pl
 # Here is an example of one simple way to run it
-# Change the input filenames to your file
+# Change the input filenames to the correct files.
 run_MaxBin.pl -contig metagenome_assembly.fasta -reads interleaved_metagenome.fasta -out 02_MaxBin_MAGs/Lab5_MAG
 ```
 
@@ -145,7 +145,9 @@ Further reading:
 
 ## Step 04: Evaluate the recovered MAGs
 
-Now that we have clustered our assembled contigs in MAGs, we want to learn something them. In theory, each MAG should represent a single sequence-discrete population (species) living in the environment where where the metagenomic sample was collected. In practice, the automated (or even manual) clustering process is filled with noise and uncertainty. Furthermore, we would like to know something about the taxonomic assignments for the bins we've recovered. We will use MiGA to evaluate some common genomic metrics and to identify the closest taxonomic assignments of our MAGs.
+Now that we have clustered our assembled contigs in MAGs, we want to learn something about them. In theory, each MAG should represent a single sequence-discrete population (species) living in the environment where the metagenomic sample was collected. In practice, the automated (or even manual) clustering process is filled with noise and uncertainty. Furthermore, we would like to know something about the taxonomic assignments for the bins we've recovered. We will use MiGA to evaluate some common genomic metrics and to identify the closest taxonomic assignments of our MAGs.
+
+In your web browser, upload your MAG(s) to the NCBI Prok section of the MiGA website, give MiGA time to calculate everything, and then explore the results. MiGA can take several hours to process results. You can move on to Step 05 while you are waiting.
 
 You can read more about MiGA and watch the video tutorials [here](http://microbial-genomes.org/). The MiGA publication is [here](https://doi.org/10.1093/nar/gky467)
 
@@ -176,62 +178,63 @@ Recruitment plots are used to visualize the distribution of metagenomic reads to
 
 ```bash
 # We're going to use some custom scripts for this section.
-# Download the scripts
+# Download the scripts.
 wget http://rothlab.com/Data/00_Scripts.tar.gz
-# uncompress the file
+# uncompress the file.
 tar -xzvf 00_Scripts.tar.gz
-# next we need to make a blast databases (repeat for each MAG fasta file)
+# next we need to make a blast databases (repeat for each MAG fasta file).
+# Change the input file name to the correct file.
 makeblastdb -dbtype nucl -in MAGname.fasta
-# Make new output directory
+# Make new output directory.
 mkdir 03_RecPlot
-# map metagenomic reads to the MAG and get the output in tabular blast format
-# (repeat for each MAG fasta file)
+# map metagenomic reads to the MAG and get the output in tabular blast format.
+# Change the file names to the correct files (repeat for each MAG fasta file).
 blastn -db MAGname.fasta -query interleaved_metagenome.fasta -out 03_RecPlot/blastoutput_filename.blast -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen'
-# filter the blast output for best hits
+# filter the blast output for best hits.
 # remember the discussion and doing this manually for Lab 1 and Lab4?
-# let's use a script this time
+# let's use a script this time.
 python 00_Scripts/BlastTab_Filter.py -h
-# run the script with default settings
-# (repeat for each MAG tabular blast file)
+# run the script with default settings.
+# Change the input file name to the correct file (repeat for each MAG tabular blast file).
 python 00_Scripts/BlastTab_Filter.py -i blastoutput_filename.blast
-# We are finished with the conda environment. Deactivate to access the native R copy on the VM
-conda deactivate
 # prepare blast output for recplot2 script
-# (repeat for each MAG filtered tabular blast file)
+# Change the file names to the correct files (repeat for each MAG filtered tabular blast file).
 BlastTab.catsbj.pl MAGname.fasta filtered_blastoutput_filename.blst
 # need to update the enveomics.R package in your R environment for RecPlot2 script.
-conda install –c conda-forge r-optparse  r-fitdistrplus r-sn r-investr r-optparse
 wget https://cran.r-project.org/src/contrib/Archive/enveomics.R/enveomics.R_1.5.0.tar.gz 
 R CMD INSTALL ./enveomics.R_1.5.0.tar.gz
-# run the recplot2 script
-# (repeat for each MAG filtered tabular blast file)
+# run the recplot2 script.
+# Change the file names to the correct files (repeat for each MAG filtered tabular blast file).
 BlastTab.recplot2.R --prefix filtered_blastoutput_filename recplotOutput.Rdata recplotOutput.pdf
 # You can explore the recruitment plot by viewing the PDF file.
 # with a little bit of R code we can extract some statistics from the Rdata file.
-# (repeat for each MAG Rdata file)
-rscript 00_Scripts/Recplot2_Summary_Stats.R recplotOutput.Rdata
+# Change the input file name to the correct file (repeat for each MAG Rdata file).
+Rscript 00_Scripts/Recplot2_Summary_Stats.R recplotOutput.Rdata
 ```
 
 ## Questions:
 
-1. How many contigs did the assembly step produce?
-2. How long is longest contig? How is contig length measured (in what unit)?
-3. What is the N50 value and how is this metric defined?
-4. How many bins did the MaxBin step create?
-5. Which bin is the most abundant?
-6. Which bin is the longest?
-7. Which bin has the most contigs?
-8. What is the closest taxonmic affiliation of **the most abundant** MAG?
-9. Do any of your MAGs contain a 16S rRNA gene sequence?
-10. Which bin has the most contamination?
-11. What are the completeness and contamination estimates based upon and how reliable they are? (Tip, you may want to read the “Learn more” boxes of MiGA)
-12. Which bin has the greatest G+C% content?
-13. Build recruitment plots for each of your MAGs. What can you infer about the intra-population diversity based on its recruitment plot?
+1.  How many contigs did the assembly step produce?
+2.  How long is the longest contig? How is contig length measured (in what unit)?
+3.  What is the N50 value and how is this metric defined?
+4.  How many bins did the MaxBin step create?
+5.  Which bin is the most abundant?
+6.  Which bin is the longest?
+7.  Which bin has the most contigs?
+8.  What is the closest taxonmic affiliation of the **most abundant** MAG?
+9.  Where was the genome of the closest relative identified by MiGA isolated?
+10. What do we know about the genus that the **most abundant** MAG probably belongs to?
+11. Do any of your MAGs contain a 16S rRNA gene sequence?
+12. Which bin has the most contamination?
+13. What are the completeness and contamination estimates based upon and how reliable are they? (Tip, you may want to read the “Learn more” boxes of MiGA)
+14. Which bin has the greatest G+C% content?
+15. Interpret the recruitment plot of the **most abundant** MAG (e.g. describe what you see as you understand it). Start with the lower left panel, then the upper left, then the lower right panel, and then the upper right panel.
 
 ## Challenge Questions:
 
-1. We mentioned that Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn't directly run Bowtie2. What is Bowtie2 used for? Can you find the Bowtie2 manual? How would you install Bowtie2 if the conda recipe didn't do it for you?
-2. What percentage of the Illumina reads map to your high-quality draft MAGs?
+1.  Bowtie2 is a dependency for MaxBin2 and we installed it as part of our MaxBin2 conda environement but we didn’t directly run Bowtie2. What is Bowtie2 used for? Can you find the Bowtie2 manual? How would you install Bowtie2 if the conda recipe didn’t do it for you?
+2.  What percent of the microbial community do the MAGs you recovered represent? (hint: the fraction of the reads recruited to the MAGs above the sequence discrete threshold)
+3.  Build a phylogenetic tree for the genus that the **most abundant MAG** probably belongs to.
 
 #### Convert MarkDown to docx for word using pandoc
 conda install pandoc
