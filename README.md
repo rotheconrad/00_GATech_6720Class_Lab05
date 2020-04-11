@@ -8,7 +8,7 @@ The instructions for this lab were written for the MicrobiomeOS virtual machine 
 
 A good overview of metagenomic sampling and analysis can be found [here](https://www.nature.com/articles/nbt.3935).
 
-This lab will require \~5GB of disk space. I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
+This lab will require and at least 8466MB of base memory and around 10GB of disk space. You can change the base memory from the settings menu in the virtual box manager from the “System” tab while the VM is powered off. To ensure you have enough disk space, I recommend to create and mount a virtual harddisk drive to the VM following these instructions:
 
 #### Add a second hard disk to your VM to increase disk space
 Takes 5 min or less.
@@ -21,7 +21,7 @@ Takes 5 min or less.
 5. Click Create
 6. Select VHD (Virtual Hard Disk) and click continue
 7. Select Fixed size and click continue
-8. Select desired size (Need at least 5gb for lab 5) and click Create
+8. Select desired size (Need at least 10gb for lab 5) and click Create
 9. Select the new drive we just created from beneath the Not Attached arrow and click Choose (It should be something like MicrobiomeOS_1.vhd)
 10. We have now created and added a second virtual harddrive to our machine. Click Ok.
 11. Start the MicrobeOS virtual machine and let it load.
@@ -47,7 +47,7 @@ bash Miniconda3-latest-Linux-x86_64.sh
 3. We want to install miniconda3 to our Lab5 disk. Input /media/microbiome/Lab5/miniconda3 and type enter.
 4. We want the installer to initialize Miniconda3 by running conda init. type yes.
 5. For changes to take effect we need to close the terminal session and open a new one.
-6. When youreopen the terminal you will (base) next to the microbiome command prompt. This lets us know which conda environment we are currently in.
+6. When you reopen the terminal you will see (base) next to the microbiome command prompt. This lets us know which conda environment we are currently in.
 
 You can learn more about Conda environments [here](https://docs.conda.io/projects/conda/en/latest/user-guide/index.html).
 
@@ -190,16 +190,17 @@ blastn -db MAGname.fasta -query interleaved_metagenome.fasta -out 03_RecPlot/bla
 # filter the blast output for best hits
 # remember the discussion and doing this manually for Lab 1 and Lab4?
 # let's use a script this time
-python 00_Scripts/BlastTab_filter.py -h
+python 00_Scripts/BlastTab_Filter.py -h
 # run the script with default settings
 # (repeat for each MAG tabular blast file)
-python 00_Scripts/BlastTab_filter.py -i blastoutput_filename.blast
+python 00_Scripts/BlastTab_Filter.py -i blastoutput_filename.blast
 # We are finished with the conda environment. Deactivate to access the native R copy on the VM
 conda deactivate
 # prepare blast output for recplot2 script
 # (repeat for each MAG filtered tabular blast file)
 BlastTab.catsbj.pl MAGname.fasta filtered_blastoutput_filename.blst
 # need to update the enveomics.R package in your R environment for RecPlot2 script.
+conda install –c conda-forge r-optparse  r-fitdistrplus r-sn r-investr r-optparse
 wget https://cran.r-project.org/src/contrib/Archive/enveomics.R/enveomics.R_1.5.0.tar.gz 
 R CMD INSTALL ./enveomics.R_1.5.0.tar.gz
 # run the recplot2 script
