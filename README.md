@@ -222,7 +222,7 @@ Rscript 00_Scripts/Recplot2_Summary_Stats.R recplotOutput.Rdata
 5.  Which bin is the most abundant?
 6.  Which bin is the longest?
 7.  Which bin has the most contigs?
-8.  What is the closest taxonmic affiliation of the **most abundant** MAG?
+8.  What is the closest taxonomic affiliation of the **most abundant** MAG?
 9.  Where was the genome of the closest relative identified by MiGA isolated?
 10. What do we know about the genus that the **most abundant** MAG probably belongs to?
 11. Do any of your MAGs contain a 16S rRNA gene sequence?
@@ -238,5 +238,8 @@ Rscript 00_Scripts/Recplot2_Summary_Stats.R recplotOutput.Rdata
 3.  Build a phylogenetic tree for the genus that the **most abundant MAG** probably belongs to.
 
 #### Convert MarkDown to docx for word using pandoc
+
+```bash
 conda install pandoc
 pandoc -o 6720_Lab05.docx -f markdown -t docx README.md
+```
